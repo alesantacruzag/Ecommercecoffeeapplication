@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               id: userId,
               email: email,
               name: name || email.split('@')[0],
-              role: 'CLIENTE',
+              role: (await supabase.auth.getUser()).data.user?.user_metadata?.role || 'CLIENTE',
             })
             .select()
             .single();
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 id: userId,
                 email: authUser.email!,
                 name: authUser.user_metadata?.full_name || authUser.email!.split('@')[0],
-                role: 'CLIENTE',
+                role: authUser.user_metadata?.role || 'CLIENTE',
               })
               .select()
               .single();
