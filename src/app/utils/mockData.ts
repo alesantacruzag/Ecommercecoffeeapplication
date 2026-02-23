@@ -177,14 +177,3 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
   },
 ];
 
-// Credenciales de acceso demo
-export const DEMO_CREDENTIALS = {
-  cliente: {
-    email: 'cliente@cafecolombia.com',
-    password: 'cliente123',
-  },
-  caficultor: {
-    email: 'admin@cafecolombia.com',
-    password: 'admin123',
-  },
-};

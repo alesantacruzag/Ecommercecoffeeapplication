@@ -14,7 +14,7 @@ import { motion } from 'motion/react';
 import type { Order } from '../types';
 
 export default function Checkout() {
-  const { items, total, clearCart } = useCart();
+  const { items, total, checkout, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'mercadopago'>('card');
@@ -47,39 +47,17 @@ export default function Checkout() {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const success = await checkout();
 
-    // Create new order
-    const newOrder: Order = {
-      id: `order-${Date.now()}`,
-      user_id: user!.id,
-      status: 'paid',
-      total: finalTotal,
-      created_at: new Date().toISOString(),
-      items: items.map(item => ({
-        id: `item-${Date.now()}-${item.product.id}`,
-        order_id: `order-${Date.now()}`,
-        product_id: item.product.id,
-        quantity: item.quantity,
-        price: item.product.discount 
-          ? item.product.price * (1 - item.product.discount / 100)
-          : item.product.price,
-        product: item.product,
-      })),
-    };
-
-    // Save order to localStorage
-    const existingOrders = JSON.parse(localStorage.getItem('cafe_orders') || '[]');
-    localStorage.setItem('cafe_orders', JSON.stringify([newOrder, ...existingOrders]));
-
-    toast.success('¡Pedido realizado con éxito!', {
-      description: 'Recibirás un correo de confirmación pronto.',
-    });
-
-    clearCart(true); // Silent mode to avoid duplicate toast
-    setIsProcessing(false);
-    navigate('/profile');
+      if (success) {
+        navigate('/profile');
+      }
+    } catch (error: any) {
+      toast.error(`Error al procesar el pedido: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -291,14 +269,14 @@ export default function Checkout() {
                     {/* Products */}
                     <div className="space-y-3">
                       {items.map(item => {
-                        const finalPrice = item.product.discount 
+                        const finalPrice = item.product.discount
                           ? item.product.price * (1 - item.product.discount / 100)
                           : item.product.price;
 
                         return (
                           <div key={item.product.id} className="flex gap-3">
-                            <img 
-                              src={item.product.image_url} 
+                            <img
+                              src={item.product.image_url}
                               alt={item.product.name}
                               className="w-16 h-16 object-cover rounded"
                             />
@@ -339,7 +317,7 @@ export default function Checkout() {
                       </div>
                     </div>
 
-                    <Button 
+                    <Button
                       type="submit"
                       className="w-full bg-[#F72585] hover:bg-[#F72585]/90"
                       size="lg"

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { useAuth } from '../context/AuthContext';
-import { MOCK_ORDERS, MOCK_PRODUCTS, MOCK_NOTIFICATIONS } from '../utils/mockData';
+import { supabase } from '../utils/supabase';
 import { motion } from 'motion/react';
 import type { OrderStatus, Order } from '../types';
 
@@ -12,22 +12,40 @@ export default function Profile() {
   const { user } = useAuth();
   const [selectedTab, setSelectedTab] = useState('orders');
   const [allOrders, setAllOrders] = useState<Order[]>([]);
+  const [userNotifications, setUserNotifications] = useState<any[]>([]);
 
   if (!user) {
     return null;
   }
 
-  // Load orders from localStorage and merge with mock orders
   useEffect(() => {
-    const localOrders = JSON.parse(localStorage.getItem('cafe_orders') || '[]') as Order[];
-    const mockUserOrders = MOCK_ORDERS.filter(o => o.user_id === user.id);
-    const combined = [...localOrders, ...mockUserOrders].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-    setAllOrders(combined);
-  }, [user.id]);
+    const fetchData = async () => {
+      if (!user.id) return;
 
-  const userNotifications = MOCK_NOTIFICATIONS.filter(n => n.user_id === user.id);
+      // 1. Fetch Orders
+      const { data: orders, error: ordersError } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items (*)
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (!ordersError) setAllOrders(orders || []);
+
+      // 2. Fetch Notifications
+      const { data: notifications, error: notifError } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (!notifError) setUserNotifications(notifications || []);
+    };
+
+    fetchData();
+  }, [user.id]);
 
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
@@ -138,32 +156,29 @@ export default function Profile() {
                               ${order.total.toFixed(2)}
                             </p>
                           </div>
-                          
+
                           {/* Order Timeline */}
                           <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <div className={`flex flex-col items-center gap-1 ${
-                              ['paid', 'shipped', 'delivered'].includes(order.status) 
-                                ? 'text-green-600' 
+                            <div className={`flex flex-col items-center gap-1 ${['paid', 'shipped', 'delivered'].includes(order.status)
+                                ? 'text-green-600'
                                 : 'text-gray-400'
-                            }`}>
+                              }`}>
                               <CheckCircle className="h-4 w-4" />
                               <span>Pagado</span>
                             </div>
                             <div className="h-px w-8 bg-gray-300"></div>
-                            <div className={`flex flex-col items-center gap-1 ${
-                              ['shipped', 'delivered'].includes(order.status) 
-                                ? 'text-green-600' 
+                            <div className={`flex flex-col items-center gap-1 ${['shipped', 'delivered'].includes(order.status)
+                                ? 'text-green-600'
                                 : 'text-gray-400'
-                            }`}>
+                              }`}>
                               <Truck className="h-4 w-4" />
                               <span>Enviado</span>
                             </div>
                             <div className="h-px w-8 bg-gray-300"></div>
-                            <div className={`flex flex-col items-center gap-1 ${
-                              order.status === 'delivered' 
-                                ? 'text-green-600' 
+                            <div className={`flex flex-col items-center gap-1 ${order.status === 'delivered'
+                                ? 'text-green-600'
                                 : 'text-gray-400'
-                            }`}>
+                              }`}>
                               <Package className="h-4 w-4" />
                               <span>Entregado</span>
                             </div>
@@ -199,12 +214,10 @@ export default function Profile() {
                     <Card className={notification.read ? 'opacity-60' : ''}>
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
-                          <div className={`p-2 rounded-full ${
-                            notification.read ? 'bg-gray-100' : 'bg-[#F72585]/10'
-                          }`}>
-                            <Package className={`h-4 w-4 ${
-                              notification.read ? 'text-gray-400' : 'text-[#F72585]'
-                            }`} />
+                          <div className={`p-2 rounded-full ${notification.read ? 'bg-gray-100' : 'bg-[#F72585]/10'
+                            }`}>
+                            <Package className={`h-4 w-4 ${notification.read ? 'text-gray-400' : 'text-[#F72585]'
+                              }`} />
                           </div>
                           <div className="flex-1">
                             <p className={notification.read ? 'text-gray-600' : 'font-medium'}>

@@ -1,72 +1,112 @@
+import { useState, useEffect } from 'react';
 import { DollarSign, Package, ShoppingCart, Users, TrendingUp, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { MOCK_ORDERS, MOCK_PRODUCTS, MOCK_USERS, MOCK_REVIEWS } from '../../utils/mockData';
+import { supabase } from '../../utils/supabase';
 import { motion } from 'motion/react';
 
 export default function Dashboard() {
-  // Calculate metrics
-  const totalRevenue = MOCK_ORDERS.reduce((sum, order) => 
-    order.status !== 'cancelled' ? sum + order.total : sum, 0
-  );
-  
-  const totalOrders = MOCK_ORDERS.length;
-  const totalProducts = MOCK_PRODUCTS.length;
-  const totalCustomers = MOCK_USERS.filter(u => u.role === 'CLIENTE').length;
+  const [metrics, setMetrics] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    totalProducts: 0,
+    totalCustomers: 0,
+  });
+  const [salesData, setSalesData] = useState<any[]>([]);
+  const [originData, setOriginData] = useState<any[]>([]);
+  const [orderStatusData, setOrderStatusData] = useState<any[]>([]);
+  const [topProducts, setTopProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Sales by month (mock data)
-  const salesData = [
-    { month: 'Ene', ventas: 1200 },
-    { month: 'Feb', ventas: 1900 },
-    { month: 'Mar', ventas: 1600 },
-    { month: 'Abr', ventas: 2400 },
-    { month: 'May', ventas: 2100 },
-    { month: 'Jun', ventas: 2800 },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      try {
+        // 1. Fetch Orders for metrics and charts
+        const { data: orders, error: ordersError } = await supabase
+          .from('orders')
+          .select('*');
 
-  // Products by origin
-  const originData = MOCK_PRODUCTS.reduce((acc, product) => {
-    const existing = acc.find(item => item.name === product.origin);
-    if (existing) {
-      existing.value++;
-    } else {
-      acc.push({ name: product.origin, value: 1 });
-    }
-    return acc;
-  }, [] as { name: string; value: number }[]);
+        if (ordersError) throw ordersError;
 
-  // Top selling products
-  const topProducts = MOCK_PRODUCTS
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 5)
-    .map(p => ({
-      name: p.name,
-      ventas: Math.floor(Math.random() * 50) + 10,
-    }));
+        // 2. Fetch Products for metrics and origin chart
+        const { data: products, error: productsError } = await supabase
+          .from('products')
+          .select('*');
 
-  // Order status distribution
-  const orderStatusData = MOCK_ORDERS.reduce((acc, order) => {
-    const existing = acc.find(item => item.name === order.status);
-    if (existing) {
-      existing.value++;
-    } else {
-      acc.push({ 
-        name: order.status === 'pending' ? 'Pendiente' :
-              order.status === 'paid' ? 'Pagado' :
+        if (productsError) throw productsError;
+
+        // 3. Fetch Customers count
+        const { count: customersCount, error: customersError } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .eq('role', 'CLIENTE');
+
+        // Calculate metrics
+        const revenue = (orders || []).reduce((sum, order) =>
+          order.status !== 'cancelled' ? sum + Number(order.total) : sum, 0
+        );
+
+        setMetrics({
+          totalRevenue: revenue,
+          totalOrders: orders?.length || 0,
+          totalProducts: products?.length || 0,
+          totalCustomers: customersCount || 0,
+        });
+
+        // Sales by month (simplified from real orders)
+        const monthlySales = (orders || []).reduce((acc: any, order) => {
+          const month = new Date(order.created_at).toLocaleString('es-ES', { month: 'short' });
+          acc[month] = (acc[month] || 0) + Number(order.total);
+          return acc;
+        }, {});
+
+        setSalesData(Object.entries(monthlySales).map(([month, ventas]) => ({ month, ventas })));
+
+        // Products by origin
+        const origins = (products || []).reduce((acc: any, product) => {
+          acc[product.origin] = (acc[product.origin] || 0) + 1;
+          return acc;
+        }, {});
+        setOriginData(Object.entries(origins).map(([name, value]) => ({ name, value: value as number })));
+
+        // Order status
+        const statuses = (orders || []).reduce((acc: any, order) => {
+          const name = order.status === 'pending' ? 'Pendiente' :
+            order.status === 'paid' ? 'Pagado' :
               order.status === 'shipped' ? 'Enviado' :
-              order.status === 'delivered' ? 'Entregado' : 'Cancelado',
-        value: 1 
-      });
-    }
-    return acc;
-  }, [] as { name: string; value: number }[]);
+                order.status === 'delivered' ? 'Entregado' : 'Cancelado';
+          acc[name] = (acc[name] || 0) + 1;
+          return acc;
+        }, {});
+        setOrderStatusData(Object.entries(statuses).map(([name, value]) => ({ name, value: value as number })));
+
+        // Top products (simulated based on orders if order_items existed, otherwise just by rating)
+        setTopProducts((products || [])
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, 5)
+          .map(p => ({
+            name: p.name,
+            ventas: Math.floor(Math.random() * 20) + 5, // Mocking sales count for now
+          }))
+        );
+
+      } catch (error: any) {
+        console.error('Error fetching dashboard data:', error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const COLORS = ['#F72585', '#C4C4FF', '#CEE90D', '#4CC9F0', '#FF6B6B'];
 
   const statsCards = [
     {
       title: 'Ingresos Totales',
-      value: `$${totalRevenue.toFixed(2)}`,
+      value: `$${metrics.totalRevenue.toFixed(2)}`,
       change: '+12.5%',
       icon: DollarSign,
       color: 'text-green-600',
@@ -74,7 +114,7 @@ export default function Dashboard() {
     },
     {
       title: 'Pedidos',
-      value: totalOrders.toString(),
+      value: metrics.totalOrders.toString(),
       change: '+8.2%',
       icon: ShoppingCart,
       color: 'text-blue-600',
@@ -82,7 +122,7 @@ export default function Dashboard() {
     },
     {
       title: 'Productos',
-      value: totalProducts.toString(),
+      value: metrics.totalProducts.toString(),
       change: '+2',
       icon: Package,
       color: 'text-purple-600',
@@ -90,13 +130,21 @@ export default function Dashboard() {
     },
     {
       title: 'Clientes',
-      value: totalCustomers.toString(),
+      value: metrics.totalCustomers.toString(),
       change: '+15.3%',
       icon: Users,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F72585]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -160,10 +208,10 @@ export default function Dashboard() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="ventas" 
-                      stroke="#F72585" 
+                    <Line
+                      type="monotone"
+                      dataKey="ventas"
+                      stroke="#F72585"
                       strokeWidth={2}
                       name="Ventas ($)"
                     />

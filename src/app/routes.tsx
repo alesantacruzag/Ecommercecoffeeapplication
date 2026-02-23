@@ -12,6 +12,8 @@ import ProductsAdmin from './pages/admin/Products';
 import OrdersAdmin from './pages/admin/Orders';
 import NotFound from './pages/NotFound';
 
+import { ProtectedRoute } from './components/ProtectedRoute';
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -22,11 +24,46 @@ export const router = createBrowserRouter([
       { path: 'catalog', element: <Catalog /> },
       { path: 'product/:id', element: <ProductDetail /> },
       { path: 'cart', element: <Cart /> },
-      { path: 'checkout', element: <Checkout /> },
-      { path: 'profile', element: <Profile /> },
-      { path: 'admin', element: <Dashboard /> },
-      { path: 'admin/products', element: <ProductsAdmin /> },
-      { path: 'admin/orders', element: <OrdersAdmin /> },
+      {
+        path: 'checkout',
+        element: (
+          <ProtectedRoute allowedRoles={['CLIENTE']}>
+            <Checkout />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'profile',
+        element: (
+          <ProtectedRoute allowedRoles={['CLIENTE']}>
+            <Profile />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'admin',
+        element: (
+          <ProtectedRoute allowedRoles={['CAFICULTOR']}>
+            <Dashboard />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'admin/products',
+        element: (
+          <ProtectedRoute allowedRoles={['CAFICULTOR']}>
+            <ProductsAdmin />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'admin/orders',
+        element: (
+          <ProtectedRoute allowedRoles={['CAFICULTOR']}>
+            <OrdersAdmin />
+          </ProtectedRoute>
+        )
+      },
       { path: '*', element: <NotFound /> },
     ],
   },

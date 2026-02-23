@@ -1,19 +1,28 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowRight, Coffee, Star, Truck, Shield } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { ProductCard } from '../components/ProductCard';
 import { motion } from 'motion/react';
 import { MOCK_PRODUCTS } from '../utils/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const featuredProducts = MOCK_PRODUCTS.filter(p => p.isNew || p.discount).slice(0, 3);
+
+  useEffect(() => {
+    if (user?.role === 'CAFICULTOR') {
+      navigate('/admin');
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 z-0"
           style={{
             backgroundImage: 'url(https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600)',
@@ -37,15 +46,15 @@ export default function Home() {
               Del caficultor a tu taza. Descubre los mejores cafés especiales cultivados en las montañas colombianas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 onClick={() => navigate('/catalog')}
                 className="bg-[#F72585] hover:bg-[#F72585]/90 text-lg px-8"
               >
                 Explorar Catálogo
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              
+
             </div>
           </motion.div>
         </div>
@@ -151,7 +160,7 @@ export default function Home() {
           </div>
 
           <div className="text-center">
-            <Button 
+            <Button
               size="lg"
               onClick={() => navigate('/catalog')}
               className="bg-[#F72585] hover:bg-[#F72585]/90"
@@ -177,7 +186,7 @@ export default function Home() {
             <p className="text-xl mb-8 opacity-90">
               Únete a miles de amantes del café que ya disfrutan de nuestra selección premium.
             </p>
-            <Button 
+            <Button
               size="lg"
               onClick={() => navigate('/catalog')}
               className="bg-white hover:bg-gray-100 text-lg px-8 text-[#030000]"

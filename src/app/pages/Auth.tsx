@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Mail, Lock, User as UserIcon } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -7,40 +7,43 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'motion/react';
-import { DEMO_CREDENTIALS } from '../utils/mockData';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const { login, isLoading } = useAuth();
+  const [role, setRole] = useState<'CLIENTE' | 'CAFICULTOR'>('CLIENTE');
+  const { login, signUp, isLoading, user: authUser } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authUser) {
+      navigate(authUser.role === 'CAFICULTOR' ? '/admin' : '/catalog');
+    }
+  }, [authUser, navigate]);
+
+  if (isLoading && !authUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F72585]/10 via-white to-[#C4C4FF]/10">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F72585]"></div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (isLogin) {
-      const success = await login(email, password);
-      if (success) {
-        // Redirect based on user role
-        const user = JSON.parse(localStorage.getItem('cafe_user') || '{}');
-        navigate(user.role === 'CAFICULTOR' ? '/admin' : '/catalog');
-      }
+      await login(email, password);
     } else {
-      // Mock registration - just switch to login
-      setIsLogin(true);
-      setEmail('');
-      setPassword('');
-      setName('');
+      const success = await signUp(email, password, name, role);
+      if (success) {
+        setIsLogin(true);
+      }
     }
   };
 
-  const quickLogin = (type: 'cliente' | 'caficultor') => {
-    const credentials = DEMO_CREDENTIALS[type];
-    setEmail(credentials.email);
-    setPassword(credentials.password);
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F72585]/10 via-white to-[#C4C4FF]/10 p-4">
@@ -56,13 +59,13 @@ export default function Auth() {
               Bienvenido
             </CardTitle>
             <CardDescription className="text-[15px] text-[14px] text-[13px]">
-              {isLogin 
-                ? 'Ingresa tus credenciales para continuar' 
+              {isLogin
+                ? 'Ingresa tus credenciales para continuar'
                 : 'Regístrate para empezar a comprar cafés premium'
               }
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
@@ -115,8 +118,25 @@ export default function Auth() {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
+              {!isLogin && (
+                <div className="space-y-4 pt-2">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="isCaficultor"
+                      checked={role === 'CAFICULTOR'}
+                      onChange={(e) => setRole(e.target.checked ? 'CAFICULTOR' : 'CLIENTE')}
+                      className="rounded border-gray-300 text-[#F72585] focus:ring-[#F72585]"
+                    />
+                    <Label htmlFor="isCaficultor" className="text-sm cursor-pointer">
+                      ¿Eres Caficultor? (Acceso Administrador)
+                    </Label>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                type="submit"
                 className="w-full bg-[#F72585] hover:bg-[#F72585]/90"
                 disabled={isLoading}
               >
@@ -124,35 +144,6 @@ export default function Auth() {
               </Button>
             </form>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Acceso demo</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => quickLogin('cliente')}
-                >
-                  Demo Cliente
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => quickLogin('caficultor')}
-                >
-                  Demo Admin
-                </Button>
-              </div>
-            </div>
 
             <div className="mt-6 text-center text-sm">
               <button
@@ -160,8 +151,8 @@ export default function Auth() {
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-[#F72585] hover:underline text-[12px]"
               >
-                {isLogin 
-                  ? '¿No tienes cuenta? Regístrate' 
+                {isLogin
+                  ? '¿No tienes cuenta? Regístrate'
                   : '¿Ya tienes cuenta? Inicia sesión'
                 }
               </button>

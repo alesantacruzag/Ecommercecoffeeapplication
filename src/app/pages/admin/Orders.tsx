@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Package, Eye, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
@@ -7,41 +7,82 @@ import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { Separator } from '../../components/ui/separator';
-import { MOCK_ORDERS, MOCK_USERS } from '../../utils/mockData';
+import { supabase } from '../../utils/supabase';
 import { toast } from 'sonner';
 import { motion } from 'motion/react';
 import type { Order, OrderStatus } from '../../types';
 
 export default function OrdersAdmin() {
-  const [orders, setOrders] = useState(
-    MOCK_ORDERS.map(order => ({
-      ...order,
-      user: MOCK_USERS.find(u => u.id === order.user_id),
-    }))
-  );
+  const [orders, setOrders] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedOrder, setSelectedOrder] = useState<(Order & { user?: any }) | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+
+  const fetchOrders = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*, profiles(name, email)')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setOrders(data.map(o => ({
+        ...o,
+        user: o.profiles
+      })));
+    } catch (error: any) {
+      toast.error(`Error al cargar pedidos: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
+    const matchesSearch =
       order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.user?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.user?.email.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
-    toast.success('Estado del pedido actualizado');
-    
-    // Simulate email notification
-    toast.success('Notificación enviada al cliente por correo');
+    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status: newStatus })
+        .eq('id', orderId);
+
+      if (error) throw error;
+
+      setOrders(orders.map(order =>
+        order.id === orderId ? { ...order, status: newStatus } : order
+      ));
+
+      // Send notification to user
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: order.user_id,
+            message: `El estado de tu pedido #${orderId.slice(0, 8).toUpperCase()} ahora es: ${getStatusLabel(newStatus)}`,
+            read: false
+          });
+      }
+
+      toast.success('Estado del pedido actualizado');
+    } catch (error: any) {
+      toast.error(`Error al actualizar estado: ${error.message}`);
+    }
   };
 
   const getStatusColor = (status: OrderStatus) => {
@@ -67,6 +108,14 @@ export default function OrdersAdmin() {
   };
 
   const statusOptions: OrderStatus[] = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F72585]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -174,8 +223,8 @@ export default function OrdersAdmin() {
 
                       {/* Actions */}
                       <div className="flex flex-col gap-2 md:min-w-[200px]">
-                        <Select 
-                          value={order.status} 
+                        <Select
+                          value={order.status}
                           onValueChange={(value: OrderStatus) => handleStatusChange(order.id, value)}
                         >
                           <SelectTrigger>
@@ -234,7 +283,7 @@ export default function OrdersAdmin() {
                 Detalle del Pedido #{selectedOrder?.id.slice(0, 8).toUpperCase()}
               </DialogTitle>
             </DialogHeader>
-            
+
             {selectedOrder && (
               <div className="space-y-4">
                 {/* Customer Info */}

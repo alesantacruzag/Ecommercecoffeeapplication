@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import Group1 from '../../imports/Group1';
 
 export function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,7 +44,10 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+          <Link
+            to={user?.role === 'CAFICULTOR' ? '/admin' : '/'}
+            className="flex items-center hover:opacity-80 transition-opacity"
+          >
             <div className="h-8 w-32">
               <Group1 />
             </div>
@@ -52,23 +55,23 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            {user ? (
+            {isLoading ? (
+              <div className="h-4 w-20 animate-pulse bg-gray-200 rounded"></div>
+            ) : user ? (
               <>
                 {user.role === 'CLIENTE' && (
                   <>
-                    <Link 
-                      to="/catalog" 
-                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${
-                        isActive('/catalog') ? 'text-[#F72585]' : 'text-gray-700'
-                      }`}
+                    <Link
+                      to="/catalog"
+                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${isActive('/catalog') ? 'text-[#F72585]' : 'text-gray-700'
+                        }`}
                     >
                       Catálogo
                     </Link>
-                    <Link 
-                      to="/profile" 
-                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${
-                        isActive('/profile') ? 'text-[#F72585]' : 'text-gray-700'
-                      }`}
+                    <Link
+                      to="/profile"
+                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${isActive('/profile') ? 'text-[#F72585]' : 'text-gray-700'
+                        }`}
                     >
                       Mis Pedidos
                     </Link>
@@ -76,27 +79,24 @@ export function Header() {
                 )}
                 {user.role === 'CAFICULTOR' && (
                   <>
-                    <Link 
-                      to="/admin" 
-                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${
-                        isActive('/admin') ? 'text-[#F72585]' : 'text-gray-700'
-                      }`}
+                    <Link
+                      to="/admin"
+                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${isActive('/admin') ? 'text-[#F72585]' : 'text-gray-700'
+                        }`}
                     >
                       Dashboard
                     </Link>
-                    <Link 
-                      to="/admin/products" 
-                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${
-                        isActive('/admin/products') ? 'text-[#F72585]' : 'text-gray-700'
-                      }`}
+                    <Link
+                      to="/admin/products"
+                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${isActive('/admin/products') ? 'text-[#F72585]' : 'text-gray-700'
+                        }`}
                     >
                       Productos
                     </Link>
-                    <Link 
-                      to="/admin/orders" 
-                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${
-                        isActive('/admin/orders') ? 'text-[#F72585]' : 'text-gray-700'
-                      }`}
+                    <Link
+                      to="/admin/orders"
+                      className={`text-sm font-medium transition-colors hover:text-[#F72585] ${isActive('/admin/orders') ? 'text-[#F72585]' : 'text-gray-700'
+                        }`}
                     >
                       Pedidos
                     </Link>
@@ -104,8 +104,8 @@ export function Header() {
                 )}
               </>
             ) : (
-              <Link 
-                to="/catalog" 
+              <Link
+                to="/catalog"
                 className="text-sm font-medium text-gray-700 transition-colors hover:text-[#F72585]"
               >
                 Catálogo
@@ -115,13 +115,15 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            {user ? (
+            {isLoading ? (
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-t-[#F72585] border-transparent"></div>
+            ) : user ? (
               <>
                 {user.role === 'CLIENTE' && (
                   <>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="relative"
                       onClick={() => navigate('/cart')}
                     >
@@ -132,10 +134,10 @@ export function Header() {
                         </Badge>
                       )}
                     </Button>
-                    
+
                   </>
                 )}
-                
+
                 {/* User Profile Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   <button
@@ -183,44 +185,6 @@ export function Header() {
                         <div className="py-2">
                           <button
                             onClick={() => {
-                              navigate(user.role === 'CLIENTE' ? '/profile' : '/admin');
-                              setDropdownOpen(false);
-                            }}
-                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
-                          >
-                            <User className="h-4 w-4" />
-                            {user.role === 'CLIENTE' ? 'Mi Perfil' : 'Dashboard'}
-                          </button>
-                          
-                          {user.role === 'CAFICULTOR' && (
-                            <>
-                              <button
-                                onClick={() => {
-                                  navigate('/admin/products');
-                                  setDropdownOpen(false);
-                                }}
-                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
-                              >
-                                <Settings className="h-4 w-4" />
-                                Gestionar Productos
-                              </button>
-                              <button
-                                onClick={() => {
-                                  navigate('/admin/orders');
-                                  setDropdownOpen(false);
-                                }}
-                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-colors"
-                              >
-                                <Bell className="h-4 w-4" />
-                                Ver Pedidos
-                              </button>
-                            </>
-                          )}
-
-                          <div className="border-t my-2"></div>
-
-                          <button
-                            onClick={() => {
                               handleLogout();
                               setDropdownOpen(false);
                             }}
@@ -243,7 +207,7 @@ export function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -266,23 +230,23 @@ export function Header() {
                 <>
                   {user.role === 'CLIENTE' && (
                     <>
-                      <Link 
-                        to="/catalog" 
+                      <Link
+                        to="/catalog"
                         onClick={() => setMobileMenuOpen(false)}
                         className="py-2 text-sm font-medium"
                       >
                         Catálogo
                       </Link>
-                      <Link 
-                        to="/cart" 
+                      <Link
+                        to="/cart"
                         onClick={() => setMobileMenuOpen(false)}
                         className="py-2 text-sm font-medium flex items-center gap-2"
                       >
                         <ShoppingCart className="h-4 w-4" />
                         Carrito {itemCount > 0 && `(${itemCount})`}
                       </Link>
-                      <Link 
-                        to="/profile" 
+                      <Link
+                        to="/profile"
                         onClick={() => setMobileMenuOpen(false)}
                         className="py-2 text-sm font-medium"
                       >
@@ -292,22 +256,22 @@ export function Header() {
                   )}
                   {user.role === 'CAFICULTOR' && (
                     <>
-                      <Link 
-                        to="/admin" 
+                      <Link
+                        to="/admin"
                         onClick={() => setMobileMenuOpen(false)}
                         className="py-2 text-sm font-medium"
                       >
                         Dashboard
                       </Link>
-                      <Link 
-                        to="/admin/products" 
+                      <Link
+                        to="/admin/products"
                         onClick={() => setMobileMenuOpen(false)}
                         className="py-2 text-sm font-medium"
                       >
                         Productos
                       </Link>
-                      <Link 
-                        to="/admin/orders" 
+                      <Link
+                        to="/admin/orders"
                         onClick={() => setMobileMenuOpen(false)}
                         className="py-2 text-sm font-medium"
                       >
@@ -315,7 +279,7 @@ export function Header() {
                       </Link>
                     </>
                   )}
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="py-2 text-sm font-medium text-left text-red-600"
                   >

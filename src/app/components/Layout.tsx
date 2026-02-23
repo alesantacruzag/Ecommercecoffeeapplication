@@ -15,7 +15,7 @@ export function Layout() {
             <Outlet />
           </main>
           <Footer />
-          <Toaster position="top-right" richColors />
+          <Toaster position="top-right" richColors closeButton duration={3000} />
         </div>
       </CartProvider>
     </AuthProvider>

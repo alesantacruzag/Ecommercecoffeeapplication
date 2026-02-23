@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { ArrowLeft, ShoppingCart, Star, Heart, Package, Truck, Shield, Plus, Minus } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -6,30 +6,84 @@ import { Badge } from '../components/ui/badge';
 import { Separator } from '../components/ui/separator';
 import { Textarea } from '../components/ui/textarea';
 import { Card, CardContent } from '../components/ui/card';
-import { MOCK_PRODUCTS, MOCK_REVIEWS, MOCK_USERS } from '../utils/mockData';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../utils/supabase';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
+import type { Product } from '../types';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { user } = useAuth();
+
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [productReviews, setProductReviews] = useState<any[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
 
-  const product = MOCK_PRODUCTS.find(p => p.id === id);
-  const productReviews = MOCK_REVIEWS.filter(r => r.product_id === id).map(review => ({
-    ...review,
-    user: MOCK_USERS.find(u => u.id === review.user_id),
-  }));
+  useEffect(() => {
+    const fetchProductData = async () => {
+      if (!id) return;
+      setIsLoading(true);
 
-  const relatedProducts = MOCK_PRODUCTS.filter(p => 
-    p.id !== id && (p.origin === product?.origin || p.roast === product?.roast)
-  ).slice(0, 3);
+      try {
+        // 1. Fetch Product
+        const { data: productData, error: productError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (productError) throw productError;
+        setProduct(productData);
+
+        // 2. Fetch Reviews with User Profiles
+        const { data: reviewsData, error: reviewsError } = await supabase
+          .from('reviews')
+          .select('*, profiles(name)')
+          .eq('product_id', id);
+
+        if (!reviewsError) {
+          setProductReviews(reviewsData.map(r => ({
+            ...r,
+            user: r.profiles
+          })));
+        }
+
+        // 3. Fetch Related Products
+        const { data: relatedData, error: relatedError } = await supabase
+          .from('products')
+          .select('*')
+          .neq('id', id)
+          .or(`origin.eq.${productData.origin},roast.eq.${productData.roast}`)
+          .limit(3);
+
+        if (!relatedError) setRelatedProducts(relatedData || []);
+
+      } catch (error: any) {
+        console.error('Error fetching product details:', error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProductData();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F72585]"></div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -42,7 +96,7 @@ export default function ProductDetail() {
     );
   }
 
-  const finalPrice = product.discount 
+  const finalPrice = product.discount
     ? product.price * (1 - product.discount / 100)
     : product.price;
 
@@ -50,21 +104,43 @@ export default function ProductDetail() {
     addToCart(product, quantity);
   };
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (!user) {
       toast.error('Debes iniciar sesión para dejar una reseña');
       return;
     }
-    toast.success('¡Reseña enviada con éxito!');
-    setNewReview({ rating: 5, comment: '' });
+
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .insert({
+          product_id: product.id,
+          user_id: user.id,
+          rating: newReview.rating,
+          comment: newReview.comment
+        });
+
+      if (error) throw error;
+
+      toast.success('¡Reseña enviada con éxito!');
+      setNewReview({ rating: 5, comment: '' });
+      // Refresh reviews
+      const { data } = await supabase
+        .from('reviews')
+        .select('*, profiles(name)')
+        .eq('product_id', product.id);
+      setProductReviews(data || []);
+    } catch (error: any) {
+      toast.error(`Error al enviar reseña: ${error.message}`);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         {/* Back Button */}
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate('/catalog')}
           className="mb-6"
         >
@@ -80,12 +156,12 @@ export default function ProductDetail() {
             animate={{ opacity: 1, x: 0 }}
             className="relative"
           >
-            <img 
-              src={product.image_url} 
+            <img
+              src={product.image_url}
               alt={product.name}
               className="w-full rounded-lg shadow-lg"
             />
-            
+
             {/* Badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {product.isNew && (
@@ -108,7 +184,7 @@ export default function ProductDetail() {
             className="bg-white p-8 rounded-lg shadow-lg"
           >
             <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-            
+
             <div className="flex items-center gap-4 mb-4">
               <div className="flex items-center gap-1">
                 <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -180,7 +256,7 @@ export default function ProductDetail() {
 
             {/* Actions */}
             <div className="flex gap-3 mb-8">
-              <Button 
+              <Button
                 className="flex-1 bg-[#F72585] hover:bg-[#F72585]/90"
                 size="lg"
                 onClick={handleAddToCart}
@@ -194,8 +270,8 @@ export default function ProductDetail() {
                 size="lg"
                 onClick={() => setIsFavorite(!isFavorite)}
               >
-                <Heart 
-                  className={`h-5 w-5 ${isFavorite ? 'fill-[#F72585] text-[#F72585]' : ''}`} 
+                <Heart
+                  className={`h-5 w-5 ${isFavorite ? 'fill-[#F72585] text-[#F72585]' : ''}`}
                 />
               </Button>
             </div>
@@ -239,11 +315,10 @@ export default function ProductDetail() {
                           onClick={() => setNewReview({ ...newReview, rating })}
                         >
                           <Star
-                            className={`h-6 w-6 ${
-                              rating <= newReview.rating
+                            className={`h-6 w-6 ${rating <= newReview.rating
                                 ? 'fill-yellow-400 text-yellow-400'
                                 : 'text-gray-300'
-                            }`}
+                              }`}
                           />
                         </button>
                       ))}
@@ -278,11 +353,10 @@ export default function ProductDetail() {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`h-4 w-4 ${
-                              i < review.rating
+                            className={`h-4 w-4 ${i < review.rating
                                 ? 'fill-yellow-400 text-yellow-400'
                                 : 'text-gray-300'
-                            }`}
+                              }`}
                           />
                         ))}
                       </div>

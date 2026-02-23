@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
@@ -7,11 +7,13 @@ import { Slider } from '../components/ui/slider';
 import { Label } from '../components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../components/ui/sheet';
 import { ProductCard } from '../components/ProductCard';
-import { MOCK_PRODUCTS } from '../utils/mockData';
+import { supabase } from '../utils/supabase';
 import { motion } from 'motion/react';
-import type { RoastLevel } from '../types';
+import type { RoastLevel, Product } from '../types';
 
 export default function Catalog() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedOrigin, setSelectedOrigin] = useState<string>('all');
   const [selectedRoast, setSelectedRoast] = useState<string>('all');
@@ -19,19 +21,39 @@ export default function Catalog() {
   const [minRating, setMinRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>('name');
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*');
+
+        if (error) throw error;
+        setProducts(data || []);
+      } catch (error: any) {
+        console.error('Error fetching products:', error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   // Get unique origins
   const origins = useMemo(() => {
-    const uniqueOrigins = [...new Set(MOCK_PRODUCTS.map(p => p.origin))];
+    const uniqueOrigins = [...new Set(products.map(p => p.origin))];
     return uniqueOrigins;
-  }, []);
+  }, [products]);
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    let products = [...MOCK_PRODUCTS];
+    let result = [...products];
 
     // Search filter
     if (searchQuery) {
-      products = products.filter(p =>
+      result = result.filter(p =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.origin.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,42 +62,42 @@ export default function Catalog() {
 
     // Origin filter
     if (selectedOrigin !== 'all') {
-      products = products.filter(p => p.origin === selectedOrigin);
+      result = result.filter(p => p.origin === selectedOrigin);
     }
 
     // Roast filter
     if (selectedRoast !== 'all') {
-      products = products.filter(p => p.roast === selectedRoast);
+      result = result.filter(p => p.roast === selectedRoast);
     }
 
     // Price filter
-    products = products.filter(p => {
+    result = result.filter(p => {
       const price = p.discount ? p.price * (1 - p.discount / 100) : p.price;
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
     // Rating filter
-    products = products.filter(p => p.rating >= minRating);
+    result = result.filter(p => p.rating >= minRating);
 
     // Sort
     switch (sortBy) {
       case 'price-asc':
-        products.sort((a, b) => a.price - b.price);
+        result.sort((a, b) => a.price - b.price);
         break;
       case 'price-desc':
-        products.sort((a, b) => b.price - a.price);
+        result.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        products.sort((a, b) => b.rating - a.rating);
+        result.sort((a, b) => b.rating - a.rating);
         break;
       case 'name':
       default:
-        products.sort((a, b) => a.name.localeCompare(b.name));
+        result.sort((a, b) => a.name.localeCompare(b.name));
         break;
     }
 
-    return products;
-  }, [searchQuery, selectedOrigin, selectedRoast, priceRange, minRating, sortBy]);
+    return result;
+  }, [searchQuery, selectedOrigin, selectedRoast, priceRange, minRating, sortBy, products]);
 
   const FilterContent = () => (
     <div className="space-y-6">
@@ -137,8 +159,8 @@ export default function Catalog() {
         />
       </div>
 
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         className="w-full"
         onClick={() => {
           setSelectedOrigin('all');
@@ -163,7 +185,7 @@ export default function Catalog() {
         >
           <h1 className="text-[24px] mx-[0px] mt-[0px] mb-[-2px]"><span className="font-bold">Catálogo de Cafés</span></h1>
           <p className="text-gray-600 text-[14px]">
-            Descubre nuestra selección de {MOCK_PRODUCTS.length} cafés especiales de Colombia
+            Descubre nuestra selección de {products.length} cafés especiales de Colombia
           </p>
         </motion.div>
 
@@ -248,7 +270,7 @@ export default function Catalog() {
                 <p className="text-gray-500 text-lg">
                   No se encontraron productos con los filtros seleccionados.
                 </p>
-                <Button 
+                <Button
                   onClick={() => {
                     setSearchQuery('');
                     setSelectedOrigin('all');

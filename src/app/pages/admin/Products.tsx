@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, Package } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -8,17 +8,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
-import { MOCK_PRODUCTS } from '../../utils/mockData';
+import { supabase } from '../../utils/supabase';
 import { toast } from 'sonner';
 import { motion } from 'motion/react';
 import type { Product, RoastLevel } from '../../types';
 
 export default function ProductsAdmin() {
-  const [products, setProducts] = useState(MOCK_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -28,6 +29,27 @@ export default function ProductsAdmin() {
     stock: '',
     image_url: '',
   });
+
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error: any) {
+      toast.error(`Error al cargar productos: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const filteredProducts = products.filter(p =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -61,43 +83,61 @@ export default function ProductsAdmin() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (editingProduct) {
-      // Update existing product
-      setProducts(products.map(p => 
-        p.id === editingProduct.id 
-          ? {
-              ...p,
-              ...formData,
-              price: parseFloat(formData.price),
-              stock: parseInt(formData.stock),
-            }
-          : p
-      ));
-      toast.success('Producto actualizado correctamente');
-    } else {
-      // Create new product
-      const newProduct: Product = {
-        id: `prod-${Date.now()}`,
-        ...formData,
+
+    try {
+      const productData = {
+        name: formData.name,
+        description: formData.description,
+        origin: formData.origin,
+        roast: formData.roast,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
-        rating: 0,
-        created_at: new Date().toISOString(),
+        image_url: formData.image_url,
       };
-      setProducts([newProduct, ...products]);
-      toast.success('Producto creado correctamente');
+
+      if (editingProduct) {
+        const { error } = await supabase
+          .from('products')
+          .update(productData)
+          .eq('id', editingProduct.id);
+
+        if (error) throw error;
+        toast.success('Producto actualizado correctamente');
+      } else {
+        const { error } = await supabase
+          .from('products')
+          .insert({
+            ...productData,
+            rating: 5,
+          });
+
+        if (error) throw error;
+        toast.success('Producto creado correctamente');
+      }
+
+      fetchProducts();
+      setIsDialogOpen(false);
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`);
     }
-    
-    setIsDialogOpen(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-      setProducts(products.filter(p => p.id !== id));
-      toast.success('Producto eliminado correctamente');
+      try {
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        toast.success('Producto eliminado correctamente');
+        fetchProducts();
+      } catch (error: any) {
+        toast.error(`Error al eliminar: ${error.message}`);
+      }
     }
   };
 
@@ -138,8 +178,8 @@ export default function ProductsAdmin() {
 
         <div className="space-y-2">
           <Label htmlFor="roast">Nivel de tueste *</Label>
-          <Select 
-            value={formData.roast} 
+          <Select
+            value={formData.roast}
             onValueChange={(value: RoastLevel) => setFormData({ ...formData, roast: value })}
           >
             <SelectTrigger>
@@ -201,6 +241,14 @@ export default function ProductsAdmin() {
     </form>
   );
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F72585]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
@@ -219,7 +267,7 @@ export default function ProductsAdmin() {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button 
+                <Button
                   onClick={() => handleOpenDialog()}
                   className="bg-[#F72585] hover:bg-[#F72585]/90"
                 >
@@ -262,13 +310,13 @@ export default function ProductsAdmin() {
               >
                 <Card className="overflow-hidden">
                   <div className="relative h-48">
-                    <img 
-                      src={product.image_url} 
+                    <img
+                      src={product.image_url}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
                     {product.stock <= 10 && (
-                      <Badge 
+                      <Badge
                         variant={product.stock === 0 ? 'destructive' : 'default'}
                         className="absolute top-3 right-3"
                       >
@@ -281,7 +329,7 @@ export default function ProductsAdmin() {
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                       {product.description}
                     </p>
-                    
+
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant="outline">{product.origin}</Badge>
                       <Badge variant="outline">{product.roast}</Badge>
