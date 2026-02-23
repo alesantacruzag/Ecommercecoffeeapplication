@@ -128,9 +128,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error('Error creating profile:', profileError.message);
         }
 
-        toast.success('¡Registro exitoso!', {
-          description: 'Revisa tu correo para confirmar tu cuenta si es necesario.'
-        });
+        // If auto-confirm is on, we'll have a session immediately
+        if (data.session) {
+          await fetchProfile(data.user.id);
+          toast.success('¡Registro e inicio de sesión exitoso!');
+        } else {
+          toast.success('¡Registro exitoso!', {
+            description: 'Revisa tu correo para confirmar tu cuenta.'
+          });
+        }
         return true;
       }
     } catch (error: any) {
