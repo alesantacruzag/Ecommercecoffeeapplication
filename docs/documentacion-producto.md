@@ -8,16 +8,13 @@
 ### 1.2 Problema que resuelve
 Los caficultores pierden gran parte de sus ingresos por la cantidad de intermediarios en la cadena de valor, lo que además les quita visibilidad, acceso a clientes finales y datos sobre su propio desempeño comercial.
 
-### 1.3 Descripción en 1–2 líneas
-CafeDirecto es una plataforma web y mobile donde consumidores pueden comprar café de origen directamente a caficultores, explorar experiencias de turismo cafetero y seguir el estado de sus pedidos en tiempo real.
-
-### 1.4 Usuario target
+### 1.3 Usuario target
 Productores de café de pequeña y mediana escala y consumidores conscientes interesados en café de origen, comercio justo y experiencias ligadas al mundo del café.
 
 - **Caficultores**: necesitan una vía directa para vender, mejor margen y más control sobre precios y stock.
 - **Consumidores**: buscan productos de origen, trazabilidad y experiencias auténticas.
 
-### 1.5 Unidad mínima de valor (UMV)
+### 1.4 Unidad mínima de valor (UMV)
 La **unidad mínima de valor** es que un consumidor:
 
 > cree un pedido y lo complete con al menos un café de un caficultor, recibiendo confirmación y estado del pedido actualizado.
