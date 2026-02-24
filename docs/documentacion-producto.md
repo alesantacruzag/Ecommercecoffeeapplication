@@ -275,7 +275,7 @@ En esta etapa temprana, el enfoque está en:
 ## 6. Anexo – Enlaces y evidencias
 
 - **URL del producto desplegado**:  
-  `<URL de Antigravity / deploy>`
+  `<(https://origencolombia.vercel.app/)>`
 
 - **Repositorio del proyecto**:  
   `<URL repositorio GitHub>`
