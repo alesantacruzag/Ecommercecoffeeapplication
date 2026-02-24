@@ -191,7 +191,7 @@ export function Header() {
                             className="w-full px-4 py-2 text-left text-sm text-[#F72585] hover:bg-[#F72585]/10 flex items-center gap-2 transition-colors"
                           >
                             <LogOut className="h-4 w-4" />
-                            Cerrar Sesión
+                            Cerrar sesión
                           </button>
                         </div>
                       </motion.div>
@@ -201,7 +201,7 @@ export function Header() {
               </>
             ) : (
               <Button onClick={() => navigate('/auth')} className="bg-[#F72585] hover:bg-[#F72585]/90">
-                Iniciar Sesión
+                Iniciar sesión
               </Button>
             )}
           </div>
@@ -283,12 +283,12 @@ export function Header() {
                     onClick={handleLogout}
                     className="py-2 text-sm font-medium text-left text-red-600"
                   >
-                    Cerrar Sesión
+                    Cerrar sesión
                   </button>
                 </>
               ) : (
                 <Button onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }} className="bg-[#F72585] hover:bg-[#F72585]/90">
-                  Iniciar Sesión
+                  Iniciar sesión
                 </Button>
               )}
             </div>

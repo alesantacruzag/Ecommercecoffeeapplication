@@ -39,10 +39,10 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="font-bold text-[48px] mx-[0px] mt-[0px] mb-[3px]">
+            <h1 className="font-bold text-5xl mb-1">
               Café Premium de Colombia
             </h1>
-            <p className="mb-8 text-gray-200 max-w-2xl mx-auto text-[20px]">
+            <p className="mb-8 text-gray-200 max-w-2xl mx-auto text-xl">
               Del caficultor a tu taza. Descubre los mejores cafés especiales cultivados en las montañas colombianas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

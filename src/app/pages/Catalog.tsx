@@ -183,8 +183,8 @@ export default function Catalog() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-[24px] mx-[0px] mt-[0px] mb-[-2px]"><span className="font-bold">Catálogo de Cafés</span></h1>
-          <p className="text-gray-600 text-[14px]">
+          <h1 className="text-2xl font-bold mb-1">Catálogo de Cafés</h1>
+          <p className="text-gray-600 text-sm">
             Descubre nuestra selección de {products.length} cafés especiales de Colombia
           </p>
         </motion.div>

@@ -34,7 +34,7 @@ export default function Cart() {
               <p className="text-gray-600 mb-8">
                 ¡Descubre nuestra selección de cafés premium y agrega tus favoritos!
               </p>
-              <Button 
+              <Button
                 size="lg"
                 onClick={() => navigate('/catalog')}
                 className="bg-[#F72585] hover:bg-[#F72585]/90"
@@ -52,8 +52,8 @@ export default function Cart() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         {/* Back Button */}
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate('/catalog')}
           className="mb-6"
         >
@@ -67,10 +67,10 @@ export default function Cart() {
             <div className="bg-white p-6 rounded-lg shadow-sm mb-4">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Carrito de Compras</h1>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
-                  onClick={clearCart}
+                  onClick={() => clearCart()}
                 >
                   Vaciar carrito
                 </Button>
@@ -78,7 +78,7 @@ export default function Cart() {
 
               <div className="space-y-4">
                 {items.map((item, index) => {
-                  const finalPrice = item.product.discount 
+                  const finalPrice = item.product.discount
                     ? item.product.price * (1 - item.product.discount / 100)
                     : item.product.price;
 
@@ -92,15 +92,21 @@ export default function Cart() {
                       <Card>
                         <CardContent className="p-4">
                           <div className="flex gap-4">
-                            <img 
-                              src={item.product.image_url} 
-                              alt={item.product.name}
-                              className="w-24 h-24 object-cover rounded cursor-pointer"
+                            <button
+                              className="focus:outline-none focus:ring-2 focus:ring-[#F72585] rounded overflow-hidden"
                               onClick={() => navigate(`/product/${item.product.id}`)}
-                            />
-                            
+                              aria-label={`Ver detalles de ${item.product.name}`}
+                            >
+                              <img
+                                src={item.product.image_url}
+                                alt={item.product.name}
+                                className="w-24 h-24 object-cover hover:scale-105 transition-transform"
+                                loading="lazy"
+                              />
+                            </button>
+
                             <div className="flex-1">
-                              <h3 
+                              <h3
                                 className="font-semibold mb-1 cursor-pointer hover:text-[#F72585] transition-colors"
                                 onClick={() => navigate(`/product/${item.product.id}`)}
                               >
@@ -193,7 +199,7 @@ export default function Cart() {
                     Agrega ${(50 - total).toFixed(2)} más para envío gratis
                   </p>
                 )}
-                
+
                 <Separator />
 
                 <div className="flex justify-between text-lg font-bold">
@@ -204,7 +210,7 @@ export default function Cart() {
                 </div>
               </div>
 
-              <Button 
+              <Button
                 className="w-full bg-[#F72585] hover:bg-[#F72585]/90"
                 size="lg"
                 onClick={handleCheckout}

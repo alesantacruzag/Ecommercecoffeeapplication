@@ -58,7 +58,7 @@ export default function Auth() {
             <CardTitle className="text-2xl">
               Bienvenido
             </CardTitle>
-            <CardDescription className="text-[15px] text-[14px] text-[13px]">
+            <CardDescription className="text-sm">
               {isLogin
                 ? 'Ingresa tus credenciales para continuar'
                 : 'Regístrate para empezar a comprar cafés premium'
@@ -140,7 +140,7 @@ export default function Auth() {
                 className="w-full bg-[#F72585] hover:bg-[#F72585]/90"
                 disabled={isLoading}
               >
-                {isLoading ? 'Cargando...' : isLogin ? 'Iniciar Sesión' : 'Registrarse'}
+                {isLoading ? 'Cargando...' : isLogin ? 'Iniciar sesión' : 'Registrarse'}
               </Button>
             </form>
 
@@ -149,7 +149,7 @@ export default function Auth() {
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-[#F72585] hover:underline text-[12px]"
+                className="text-[#F72585] hover:underline text-xs"
               >
                 {isLogin
                   ? '¿No tienes cuenta? Regístrate'

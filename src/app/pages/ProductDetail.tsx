@@ -160,6 +160,7 @@ export default function ProductDetail() {
               src={product.image_url}
               alt={product.name}
               className="w-full rounded-lg shadow-lg"
+              loading="eager"
             />
 
             {/* Badges */}
@@ -316,8 +317,8 @@ export default function ProductDetail() {
                         >
                           <Star
                             className={`h-6 w-6 ${rating <= newReview.rating
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-gray-300'
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-300'
                               }`}
                           />
                         </button>
@@ -354,8 +355,8 @@ export default function ProductDetail() {
                           <Star
                             key={i}
                             className={`h-4 w-4 ${i < review.rating
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-gray-300'
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-300'
                               }`}
                           />
                         ))}
@@ -383,7 +384,7 @@ export default function ProductDetail() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedProducts.map(relatedProduct => (
                 <Card key={relatedProduct.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/product/${relatedProduct.id}`)}>
-                  <img src={relatedProduct.image_url} alt={relatedProduct.name} className="w-full h-48 object-cover rounded-t-lg" />
+                  <img src={relatedProduct.image_url} alt={`Imagen de ${relatedProduct.name}`} className="w-full h-48 object-cover rounded-t-lg" loading="lazy" />
                   <CardContent className="pt-4">
                     <h3 className="font-semibold mb-2">{relatedProduct.name}</h3>
                     <div className="flex items-center justify-between">
