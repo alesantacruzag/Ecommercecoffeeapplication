@@ -1,12 +1,19 @@
-
+// @ts-nocheck
+/// <reference lib="deno.ns" />
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.7"
 
 const RESEND_API_KEY = "re_7fz4wmMP_7RjnW88sTyBAuePK3boKT1aa";
 const ADMIN_EMAIL = "admin@origen.com";
 
-Deno.serve(async (req) => {
+interface WebhookPayload {
+    record: any;
+    old_record: any;
+    type: 'INSERT' | 'UPDATE' | 'DELETE' | 'SELECT';
+}
+
+Deno.serve(async (req: Request) => {
     try {
-        const payload = await req.json();
+        const payload: WebhookPayload = await req.json();
         console.log("Received webhook payload:", JSON.stringify(payload, null, 2));
 
         const { record, old_record, type } = payload;
@@ -52,7 +59,7 @@ Deno.serve(async (req) => {
             return new Response(JSON.stringify({ error: "Failed to fetch order items" }), { status: 500 });
         }
 
-        const itemsHtml = items.map(item => `
+        const itemsHtml = (items || []).map((item: any) => `
       <li>
         <strong>${item.product?.name || 'Producto'}</strong>: ${item.quantity} x $${item.price}
       </li>
@@ -80,7 +87,7 @@ Deno.serve(async (req) => {
     `;
 
         // Send to Client
-        const clientRes = await fetch("https://api.resend.com/emails", {
+        await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -95,7 +102,7 @@ Deno.serve(async (req) => {
         });
 
         // Send to Admin
-        const adminRes = await fetch("https://api.resend.com/emails", {
+        await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -113,6 +120,6 @@ Deno.serve(async (req) => {
 
     } catch (error) {
         console.error("Error in Edge Function:", error);
-        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+        return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500 });
     }
 });
