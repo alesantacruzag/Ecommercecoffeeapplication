@@ -152,23 +152,7 @@ Al menos 20% de los caficultores activos concretan una venta.
 
 - **URL del producto desplegado:** https://tu-app.vercel.app  
 - **Repositorio:** https://github.com/alesantacruzag/Ecommercecoffeeapplication  
-- **Credenciales de prueba:** usuario: demo / pass: demo  
-- **Capturas de integraciones funcionando:**  
-  - Checkout con Mercado Pago  
-  - Emails enviados con Resend  
-- **Dashboard de métricas:** link o captura
+- **Credenciales de prueba:** 
+usuario: demo 
+pass: demo  
 
----
-
-## ✅ Checklist de cumplimiento
-
-- [x] Integración de al menos 2 servicios (pagos + email)  
-- [x] Cada integración asociada a acción concreta de usuario  
-- [x] Unidad mínima de valor definida  
-- [x] 5 KPIs AARRR definidos  
-- [x] Métricas priorizadas y postergadas justificadas  
-- [x] Deck de 5 slides completo  
-- [x] 3 hacks de límites de vibe coding implementados  
-- [x] Riesgos y decisiones postergadas documentados
-
-Agrego documentación del producto
