@@ -65,7 +65,7 @@ En el proyecto se integran **2 servicios externos** enlazados a acciones concret
 
 ### 2.2 Servicio 2 – Pagos
 
-- **Servicio elegido**: Plataforma de pago (ej. Stripe / Mercado Pago / Wompi según implementación real).
+- **Servicio elegido**: Tarjeta débito / Mercado Pago
 - **Acción de usuario asociada**: confirmación del pedido y pago del carrito.
 
 #### Implementación (visión general)
