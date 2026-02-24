@@ -174,7 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    toast.success('Sesión cerrada correctamente');
+    toast.success('sesión cerrada correctamente');
   };
 
   return (
