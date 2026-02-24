@@ -157,7 +157,7 @@ En esta etapa temprana, el enfoque está en:
   - Comisión por transacción (porcentaje de cada pedido).
   - Posible suscripción futura para caficultores (destacar productos, analytics avanzados).
 - Precio:
-  - El consumidor paga el precio del café/experiencia fijado por el caficultor + margen/plataforma en la comisión.
+  - El consumidor paga el precio del café fijado por el caficultor + margen/plataforma en la comisión.
 
 ---
 
