@@ -1,9 +1,9 @@
-# CafeDirecto – Documentación del Producto
+# Origen – Documentación del Producto
 
 ## 1. Resumen Ejecutivo
 
 ### 1.1 Nombre del proyecto
-**CafeDirecto** – Conecta caficultores con consumidores finales mediante una web app que elimina intermediarios y mejora el margen del productor.
+**Origen**
 
 ### 1.2 Problema que resuelve
 Los caficultores pierden gran parte de sus ingresos por la cantidad de intermediarios en la cadena de valor, lo que además les quita visibilidad, acceso a clientes finales y datos sobre su propio desempeño comercial.
