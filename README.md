@@ -89,14 +89,14 @@ Ver el archivo [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) para instrucciones detal
 
 ### Cliente
 ```
-Email: cliente@cafecolombia.com
-Password: cliente123
+Email: cliente@origen.com
+Password: clienteorigen024
 ```
 
 ### Caficultor (Administrador)
 ```
-Email: admin@cafecolombia.com
-Password: admin123
+Email: admin@origen.com
+Password: adminorigen024
 ```
 
 ## 📂 Estructura del Proyecto
