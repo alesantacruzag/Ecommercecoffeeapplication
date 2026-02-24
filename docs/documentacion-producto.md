@@ -31,7 +31,7 @@ Esta acción implica que:
 
 ## 2. Integración de Servicios
 
-En el proyecto se integran **2 servicios externos** enlazados a acciones concretas de usuario: un servicio de email y un servicio de analytics.
+En el proyecto se integran **2 servicios externos** enlazados a acciones concretas de usuario: un servicio de email y un servicio de pagos.
 
 ### 2.1 Servicio 1 – Email (ej. Resend)
 
