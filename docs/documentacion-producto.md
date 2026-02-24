@@ -278,7 +278,7 @@ En esta etapa temprana, el enfoque está en:
   https://origencolombia.vercel.app
 
 - **Repositorio del proyecto**:  
-  `<URL repositorio GitHub>`
+  https://github.com/alesantacruzag/Ecommercecoffeeapplication
 
 - **Credenciales de prueba** (si aplica o crear usuario demo):
   - Usuario cliente demo: `cliente@origen.com` / `clienteorigen024`
