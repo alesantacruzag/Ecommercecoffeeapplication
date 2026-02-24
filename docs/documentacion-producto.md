@@ -30,7 +30,7 @@ Esta acción implica que:
 
 En el proyecto se integran **2 servicios externos** enlazados a acciones concretas de usuario: un servicio de email y un servicio de pagos.
 
-### 2.1 Servicio 1 – Email (ej. Resend)
+### 2.1 Servicio 1 – Email (Resend)
 
 - **Servicio elegido**: Resend (Email Transactional)
 - **Acción de usuario asociada**: creación de pedido.
@@ -41,7 +41,7 @@ En el proyecto se integran **2 servicios externos** enlazados a acciones concret
     - Actualiza stock/cupos.
     - Envía un email de confirmación al cliente (y opcionalmente al admin/caficultor).
 
-#### Implementación (visión general)
+#### Implementación 
 - La Edge Function `create-order` llama al SDK/endpoint de Resend después de crear el pedido.
 - Se incluye en el correo: número de pedido, resumen de items (cafés y experiencias), total y estado inicial (`pendiente`).
 - El email se genera como **evento transaccional**, no como boletín.
@@ -65,7 +65,7 @@ En el proyecto se integran **2 servicios externos** enlazados a acciones concret
 - **Servicio elegido**: Tarjeta débito / Mercado Pago
 - **Acción de usuario asociada**: confirmación del pedido y pago del carrito.
 
-#### Implementación (visión general)
+#### Implementación
 - En el flujo de checkout, cuando el usuario confirma su pedido:
   - El frontend prepara el resumen (items + total).
   - Se redirige o abre el flujo del proveedor de pagos.
@@ -92,7 +92,7 @@ En el proyecto se integran **2 servicios externos** enlazados a acciones concret
 
 Como se definió antes, la UMV es:
 
-> “Un usuario crea su primer pedido con al menos un café de un caficultor y el sistema le muestra y notifica el estado del pedido.”
+> “Un usuario crea su primer pedido con al menos un café y el sistema le muestra y notifica el estado del pedido.”
 
 Esta acción valida:
 - Que la propuesta de valor es suficientemente clara para llevar al usuario a comprar.
