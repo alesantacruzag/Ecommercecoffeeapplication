@@ -1,0 +1,172 @@
+# 📦 Entrega Final: Documentación del Producto
+
+## 1. Resumen Ejecutivo
+
+**Nombre del Proyecto:** Café Colombia Premium  
+**Problema que resuelve:**  
+Los caficultores colombianos venden su café a intermediarios a precios bajos por no tener acceso directo al consumidor final. La plataforma conecta productores de café de origen con compradores finales para que reciban ingresos justos.
+
+**Usuario target:**  
+- Caficultores de café de especialidad en Colombia  
+- Consumidores urbanos interesados en café de origen y comercio justo
+
+**Unidad mínima de valor:**  
+Que un caficultor publique su primer café y reciba su primer pedido directo.
+
+---
+
+## 2. Integración de Servicios (Requisito: 2 de 3)
+
+### Servicio 1: Pagos
+
+**Servicio elegido:** Mercado Pago (tarjeta de crédito/débito)  
+**Acción de usuario asociada:**  
+El comprador realiza el pago de un café desde el checkout.
+
+**Implementación:**  
+- Integración del checkout de Mercado Pago para pagos con tarjeta.  
+- Flujo: Usuario selecciona café → lo agrega al carrito → paga con tarjeta vía Mercado Pago → se confirma el pedido → se notifica al caficultor.  
+- Beneficio: Permite transacciones seguras y accesibles en Latinoamérica, facilitando el cobro directo al caficultor.
+
+---
+
+### Servicio 2: Email
+
+**Servicio elegido:** Resend  
+**Acción de usuario asociada:**  
+Confirmación de compra y notificación al caficultor cuando recibe un pedido.
+
+**Implementación:**  
+- Envío de emails automáticos al comprador con la confirmación del pedido.  
+- Envío de emails al caficultor cuando se concreta una venta.  
+- Flujo: Pago aprobado → trigger de email → confirmación para ambas partes.  
+- Beneficio: Genera confianza, reduce la incertidumbre post-compra y mejora la experiencia del usuario.
+
+---
+
+## 3. Métricas y Aprendizaje (Modelo AARRR)
+
+### 3.1 Definición de la unidad mínima de valor
+
+La unidad mínima de valor es que un caficultor publique un café en la plataforma y reciba su primer pedido directo sin intermediarios.
+
+---
+
+### 3.2 KPIs por etapa del embudo AARRR
+
+| Etapa        | KPI                              | Definición operativa                                  | Por qué es relevante                          |
+|-------------|----------------------------------|-------------------------------------------------------|-----------------------------------------------|
+| Adquisición | Visitas al sitio                 | Usuarios únicos por semana                            | Mide interés inicial en el producto           |
+| Activación  | % de caficultores que publican   | Usuarios que completan la publicación de un café      | Valida el onboarding y la propuesta de valor  |
+| Retención   | % de usuarios que vuelven en 7d  | Usuarios activos que regresan en 7 días               | Indica valor recurrente del producto          |
+| Referral    | Tasa de links compartidos        | Cantidad de compartidos por usuario activo            | Mide potencial de crecimiento orgánico        |
+| Revenue     | Conversión a compra              | Compras realizadas / visitas                          | Valida el modelo de monetización              |
+
+---
+
+### 3.3 Métricas priorizadas y postergadas
+
+**Métricas que observamos activamente:**  
+- % de caficultores que publican su primer café (valida onboarding y valor inicial).  
+- Conversión a compra (valida disposición a pagar).
+
+**Métricas que decidimos no priorizar todavía:**  
+- Tiempo promedio en la plataforma (métrica de vanidad).  
+- Cantidad de vistas por producto (no garantiza compra).
+
+**Justificación general:**  
+En una etapa temprana del producto priorizamos métricas que validan el valor real y la monetización por sobre métricas de volumen o engagement superficial.
+
+---
+
+## 4. Estrategia de Distribución (Deck de 5 slides)
+
+### Slide 1: Modelo de Negocio
+- Propuesta de valor: conexión directa entre caficultores y consumidores finales.  
+- Modelo de ingresos: comisión por transacción.  
+- Estructura de precios: 5–10% por venta realizada.
+
+### Slide 2: Usuario Target
+- Caficultores de café de especialidad en Colombia.  
+- Consumidores urbanos que valoran el origen y el comercio justo.  
+- Situación actual: venta a intermediarios o por redes sociales sin trazabilidad.
+
+### Slide 3: Hipótesis a Validar
+- Hipótesis 1: Los caficultores están dispuestos a vender directo si la plataforma es simple.  
+- Hipótesis 2: Los consumidores están dispuestos a pagar más por café de origen.  
+- Hipótesis 3: Mostrar la historia del caficultor aumenta la conversión.
+
+### Slide 4: Canales de Adquisición
+
+| Canal        | Táctica inicial                         | Por qué este canal                         |
+|--------------|------------------------------------------|---------------------------------------------|
+| Comunidades  | Grupos de caficultores y ferias locales  | Acceso directo a early adopters             |
+| Redes sociales | Contenido educativo sobre café        | Bajo costo y alto alcance                   |
+| Alianzas     | Cafeterías de especialidad               | Confianza y visibilidad inicial             |
+
+### Slide 5: Camino a los primeros 1.000 usuarios
+
+**Fase 1 (0–100):** contacto directo con caficultores y compradores early adopters.  
+**Fase 2 (100–500):** activación de redes sociales y referidos.  
+**Fase 3 (500–1000):** alianzas con cafeterías y microinfluencers.
+
+**Métrica de éxito por fase:**  
+Al menos 20% de los caficultores activos concretan una venta.
+
+---
+
+## 5. Conciencia Técnica (Hacks y Límites del Vibe Coding)
+
+### 5.1 Hacks implementados
+
+| Hack                  | Descripción                                      | Riesgo que mitiga                     |
+|-----------------------|--------------------------------------------------|----------------------------------------|
+| Feature flags manuales| Activación progresiva de funcionalidades         | Romper producción con features nuevas  |
+| Logs estratégicos     | Registro básico de errores y eventos clave       | Bugs silenciosos                       |
+| Seed de datos         | Productos de ejemplo para pruebas de UX          | Experiencia vacía al iniciar           |
+
+---
+
+### 5.2 Riesgos detectados y decisiones postergadas
+
+**Riesgos identificados:**  
+- Baja adopción de caficultores: se mitiga con entrevistas y onboarding asistido.  
+- Problemas de logística/envíos: se monitorea con reclamos y feedback.
+
+**Decisiones postergadas conscientemente:**  
+- Sistema de reputación y reviews avanzadas: se evaluará al tener más volumen.  
+- App mobile nativa: se prioriza validar el modelo con web primero.
+
+---
+
+### 5.3 Supuestos asumidos
+
+| Supuesto                                      | Implicancia si es falso                  | Señal que nos hará revisarlo            |
+|----------------------------------------------|-------------------------------------------|------------------------------------------|
+| Los caficultores usan smartphones             | Menor adopción del producto               | Baja tasa de onboarding                  |
+| Los usuarios confían en pagar online          | Baja conversión a compra                  | Alto abandono en checkout                |
+
+---
+
+## 6. Anexo: Enlaces y Evidencias
+
+- **URL del producto desplegado:** https://tu-app.vercel.app  
+- **Repositorio:** https://github.com/alesantacruzag/Ecommercecoffeeapplication  
+- **Credenciales de prueba:** usuario: demo / pass: demo  
+- **Capturas de integraciones funcionando:**  
+  - Checkout con Mercado Pago  
+  - Emails enviados con Resend  
+- **Dashboard de métricas:** link o captura
+
+---
+
+## ✅ Checklist de cumplimiento
+
+- [x] Integración de al menos 2 servicios (pagos + email)  
+- [x] Cada integración asociada a acción concreta de usuario  
+- [x] Unidad mínima de valor definida  
+- [x] 5 KPIs AARRR definidos  
+- [x] Métricas priorizadas y postergadas justificadas  
+- [x] Deck de 5 slides completo  
+- [x] 3 hacks de límites de vibe coding implementados  
+- [x] Riesgos y decisiones postergadas documentados
