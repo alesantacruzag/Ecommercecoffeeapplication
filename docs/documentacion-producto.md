@@ -63,31 +63,29 @@ En el proyecto se integran **2 servicios externos** enlazados a acciones concret
 
 ---
 
-### 2.2 Servicio 2 – Analytics (ej. PostHog)
+### 2.2 Servicio 2 – Pagos
 
-- **Servicio elegido**: PostHog (Producto/Behavior Analytics)
-- **Acción de usuario asociada**: completar la UMV (creación de pedido) y eventos clave del funnel AARRR.
+- **Servicio elegido**: Plataforma de pago (ej. Stripe / Mercado Pago / Wompi según implementación real).
+- **Acción de usuario asociada**: confirmación del pedido y pago del carrito.
 
 #### Implementación (visión general)
-- El frontend envía eventos a PostHog en momentos clave:
-  - `view_catalog_cafes`
-  - `add_to_cart`
-  - `start_checkout`
-  - `order_created`
-  - `order_status_updated`
-- Cada evento incluye propiedades: `user_id`, `role`, `valor_total`, `cantidad_items`, tipo de item (café/experiencia), etc.
+- En el flujo de checkout, cuando el usuario confirma su pedido:
+  - El frontend prepara el resumen (items + total).
+  - Se redirige o abre el flujo del proveedor de pagos.
+  - Al confirmarse el pago, se registra/valida la transacción y se llama a la lógica de creación de pedido (Edge Function `create-order` o equivalente).
+- El id de la transacción de pago queda asociado al pedido (directamente en `pedidos` o en una tabla relacionada).
 
 #### Flujo que habilita
-- Seguimiento del funnel desde exploración de catálogo hasta creación de pedido.
-- Análisis de:
-  - Dónde abandonan los usuarios.
-  - Qué tipos de productos convierten mejor (cafés vs experiencias).
-  - Frecuencia de compra y retención por cohorte.
+1. El usuario arma su carrito con cafés y/o experiencias.
+2. El usuario pasa al checkout de pago.
+3. Se procesa el pago en el servicio externo.
+4. Una vez aprobado, se crea el pedido en Supabase con estado inicial (`pendiente` o `confirmado` según diseño).
+5. El usuario ve la confirmación del pedido en la app.
 
-#### Beneficio para el producto
-- Permite tomar decisiones informadas sobre qué optimizar en la UI (por ejemplo, simplificar checkout si hay abandono ahí).
-- Da visibilidad de qué caficultores o experiencias generan más valor.
-- Ayuda a priorizar futuras features (suscripciones, bundles, etc.).
+#### Beneficio para el producto/usuario
+- El usuario puede completar todo el ciclo de compra desde la app.
+- El caficultor recibe pagos de manera confiable.
+- El sistema puede diferenciar pedidos realmente pagados versus intentos fallidos.
 
 ---
 
