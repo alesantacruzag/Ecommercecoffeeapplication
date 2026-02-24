@@ -1,6 +1,6 @@
 # ☕ Café Colombia Premium
 
-Aplicación web profesional para la venta de cafés especiales de Colombia con dos roles: **Cliente** y **Caficultor (Administrador)**.
+Aplicación web para la venta de cafés especiales de Colombia con dos roles: **Cliente** y **Caficultor (Administrador)**.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)
