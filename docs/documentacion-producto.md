@@ -219,5 +219,6 @@ https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Distribuci%C3%B3n?page-id=0%3
   - Usuario cliente demo: `cliente@origen.com` / `clienteorigen024`
   - Usuario admin demo: `admin@origen.com` / `adminorigen024`
 
-- **Capturas de integraciones funcionando**:
+- **Capturas de integraciones funcionando**
+  
   https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Entrega-Productos-con-IA?page-id=32%3A8125&node-id=32-8126&viewport=98%2C265%2C0.11&t=yG8P5i7e9HEWNGgm-1&scaling=contain&content-scaling=fixed
