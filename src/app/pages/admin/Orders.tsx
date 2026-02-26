@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Package, Eye, Mail } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -10,7 +10,7 @@ import { Separator } from '../../components/ui/separator';
 import { supabase } from '../../utils/supabase';
 import { toast } from 'sonner';
 import { motion } from 'motion/react';
-import type { Order, OrderStatus } from '../../types';
+import type { OrderStatus } from '../../types';
 
 export default function OrdersAdmin() {
   const [orders, setOrders] = useState<any[]>([]);
