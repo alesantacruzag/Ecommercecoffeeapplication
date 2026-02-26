@@ -156,29 +156,11 @@ https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Distribuci%C3%B3n?page-id=0%3
 
 ### 5.1 Hacks implementados
 
-#### Hack 1 – Feature flags manuales para vistas/admin
-- **Descripción**: uso de roles (`admin`, `cliente`) y checks en frontend para mostrar/ocultar componentes de administración de productos y pedidos.
-- **Cómo se implementa**: condición basada en `profile.role` para habilitar vistas de gestión de cafés/experiencias.
-- **Riesgo evitado**: cambiar el rol o la estructura de navegación sin tener que reestructurar toda la app; reduce riesgo de errores visuales al experimentar.
-
-#### Hack 2 – Seed de datos realistas
-- **Descripción**: creación de cafés y experiencias de ejemplo con distintos orígenes, precios y stock/cupos.
-- **Cómo se implementa**: script/SQL de seed en Supabase y/o datos cargados desde panel admin.
-- **Riesgo evitado**: probar el sistema con datos irreales o vacíos que no reflejen la experiencia real del usuario.
-
-#### Hack 3 – Logs estratégicos en Edge Functions
-- **Descripción**: loguear en consola/servicio externo los intentos de creación de pedido, fallos de stock y errores de validación.
-- **Cómo se implementa**: logs en la Edge Function `create-order` antes y después de cada paso crítico.
-- **Riesgo evitado**: no entender por qué se rompen pedidos en producción; facilita debug rápido.
-
-### 5.1 Hacks implementados (mínimo 3)
-
 | Hack | Descripción | Cómo lo implementamos | Riesgo técnico/producto que evitamos |
 |------|-------------|-----------------------|-------------------------------------|
 | **Hack 1 – Feature flags manuales** | Control de vistas admin vs cliente sin reestructurar app | Check `profile.role` para mostrar/ocultar gestión de cafés y pedidos | Cambios visuales accidentales al experimentar con roles |
 | **Hack 2 – Seed de datos realistas** | Carga de cafés/experiencias de ejemplo para probar flujos completos | Script SQL en Supabase + panel admin para crear datos iniciales | Probar sistema vacío o con datos irreales |
-| **Hack 3 – Logs estratégicos** | Loguear fallos críticos en Edge Functions y flujos de pago | Logs en `create-order` + resultados de pago y errores de stock | No entender por qué se rompen pedidos en producción |
-
+| **Hack 3 – Logs estratégicos** | Loguear fallos críticos en Edge Functions y flujos de pago | Logs en `create-order` + resultados de pago y errores de stock | No entender por qué se rompen pedidos en producción; facilita debug rápido. |
 
 ---
 
