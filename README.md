@@ -1,4 +1,4 @@
-# ☕ Café Colombia Premium
+# Origen Colombia
 
 Aplicación web para la venta de cafés especiales de Colombia con dos roles: **Cliente** y **Caficultor (Administrador)**.
 
@@ -7,29 +7,29 @@ Aplicación web para la venta de cafés especiales de Colombia con dos roles: **
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-38B2AC?logo=tailwind-css)
 
-## 🎯 Características Principales
+## Características Principales
 
-### 👤 Vista Cliente
-- ✅ Catálogo de productos con filtros avanzados (precio, origen, tueste, calificación)
-- 🛒 Carrito de compras con persistencia local
-- 💳 Checkout con opciones de pago (Tarjeta + Mercado Pago)
-- ⭐ Sistema de reseñas y puntuaciones
-- 📦 Perfil de usuario con historial de pedidos
-- 🔔 Sistema de notificaciones en tiempo real
-- 🔍 Búsqueda avanzada de productos
-- ❤️ Sistema de favoritos (wishlist)
+### Vista Cliente
+- Catálogo de productos con filtros avanzados (precio, origen, tueste, calificación)
+- Carrito de compras con persistencia local
+- Checkout con opciones de pago (Tarjeta + Mercado Pago)
+- Sistema de reseñas y puntuaciones
+- Perfil de usuario con historial de pedidos
+- Sistema de notificaciones en tiempo real
+- Búsqueda avanzada de productos
+- Sistema de favoritos (wishlist)
 
-### 👨‍💼 Vista Caficultor (Administrador)
-- 📊 Dashboard con métricas y estadísticas en tiempo real
-- ➕ CRUD completo de productos
-- 📦 Gestión de inventario con alertas de stock
-- 🚚 Gestión de pedidos con cambio de estados
-- 📈 Panel de análisis (ventas, productos más vendidos, ingresos)
-- 👥 Vista de clientes registrados
-- ✉️ Envío de notificaciones a clientes
-- 💬 Gestión de reseñas
+### Vista Caficultor (Administrador)
+- Dashboard con métricas y estadísticas en tiempo real
+- CRUD completo de productos
+- Gestión de inventario con alertas de stock
+- Gestión de pedidos con cambio de estados
+- Panel de análisis (ventas, productos más vendidos, ingresos)
+- Vista de clientes registrados
+- Envío de notificaciones a clientes
+- Gestión de reseñas
 
-## 🚀 Stack Tecnológico
+## Stack Tecnológico
 
 - **Framework**: React 18.3 + TypeScript
 - **Routing**: React Router 7 (Data Mode)
@@ -43,7 +43,7 @@ Aplicación web para la venta de cafés especiales de Colombia con dos roles: **
 - **Backend**: Supabase (preparado para conexión)
 - **Build Tool**: Vite 6.x
 
-## 📦 Instalación
+## Instalación
 
 ```bash
 # Clonar el repositorio
@@ -60,7 +60,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-## 🗄️ Configuración de Supabase
+## Configuración de Supabase
 
 Ver el archivo [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) para instrucciones detalladas sobre:
 - Creación de tablas
@@ -69,7 +69,7 @@ Ver el archivo [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) para instrucciones detal
 - Configuración de autenticación
 - Conexión vía Antigravity MCP
 
-## 🎨 Diseño y UX
+## Diseño y UX
 
 ### Paleta de Colores
 - **Primario**: `#F72585` - Botones principales y elementos destacados
@@ -78,14 +78,14 @@ Ver el archivo [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) para instrucciones detal
 - **Fondo**: `#FFFFFF` / `#F9FAFB`
 
 ### Características de Diseño
-- ✨ Animaciones suaves con Motion
-- 📱 Mobile-first responsive design
-- 🌗 Preparado para modo oscuro
-- ♿ Accesibilidad mejorada
-- 🎯 Feedback visual con toasts
-- 🔄 PWA ready con Service Worker
+- Animaciones suaves con Motion
+- Mobile-first responsive design
+- Preparado para modo oscuro
+- Accesibilidad mejorada
+- Feedback visual con toasts
+- PWA ready con Service Worker
 
-## 🔑 Credenciales de Acceso Demo
+## Credenciales de Acceso Demo
 
 ### Cliente
 ```
@@ -99,7 +99,7 @@ Email: admin@origen.com
 Password: adminorigen024
 ```
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 /
@@ -127,7 +127,7 @@ Password: adminorigen024
 └── README.md           # Este archivo
 ```
 
-## 🛣️ Rutas de la Aplicación
+## Rutas de la Aplicación
 
 ### Públicas
 - `/` - Página de inicio
@@ -145,15 +145,15 @@ Password: adminorigen024
 - `/admin/products` - Gestión de productos
 - `/admin/orders` - Gestión de pedidos
 
-## 🔒 Seguridad
+## Seguridad
 
-- ✅ Row Level Security (RLS) configurado en Supabase
-- ✅ Autenticación JWT mediante Supabase Auth
-- ✅ Políticas de acceso por rol (Cliente/Caficultor)
-- ✅ Validación de formularios
-- ⚠️ **Nota**: Este proyecto es para demostración. No almacenar datos sensibles reales.
+- Row Level Security (RLS) configurado en Supabase
+- Autenticación JWT mediante Supabase Auth
+- Políticas de acceso por rol (Cliente/Caficultor)
+- Validación de formularios
+- **Nota**: Este proyecto es para demostración. No almacenar datos sensibles reales.
 
-## 🎁 Características Bonus Implementadas
+## Características Bonus Implementadas
 
 - [x] Sistema de favoritos (wishlist)
 - [x] Cupones de descuento (UI preparada)
@@ -164,7 +164,7 @@ Password: adminorigen024
 - [x] Animaciones fluidas
 - [x] Búsqueda y filtros avanzados
 
-## 📱 PWA (Progressive Web App)
+## PWA (Progressive Web App)
 
 La aplicación está configurada como PWA:
 - Funciona offline con Service Worker
@@ -172,7 +172,7 @@ La aplicación está configurada como PWA:
 - Caché inteligente de recursos
 - Manifest.json configurado
 
-## 🧪 Datos Mock
+## Datos Mock
 
 El proyecto incluye datos mock para desarrollo en `src/app/utils/mockData.ts`:
 - 3 usuarios (1 admin, 2 clientes)
@@ -181,18 +181,18 @@ El proyecto incluye datos mock para desarrollo en `src/app/utils/mockData.ts`:
 - 3 reseñas
 - 2 notificaciones
 
-## 🚀 Próximos Pasos
+## Próximos Pasos
 
 1. **Conectar Supabase**: Sigue la guía en [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
 2. **Configurar Antigravity MCP**: Para la conexión con Supabase
 3. **Personalizar**: Ajusta colores, textos y productos según tus necesidades
 4. **Desplegar**: Usa Vercel, Netlify o tu plataforma preferida
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto fue creado como demostración y está disponible bajo licencia MIT.
 
-## 👨‍💻 Desarrollado por
+##  Desarrollado por
 
 Proyecto creado siguiendo las mejores prácticas de desarrollo web moderno.
 

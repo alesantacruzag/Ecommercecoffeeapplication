@@ -30,9 +30,9 @@ Esta acción implica que:
 
 En el proyecto se integran **2 servicios externos** enlazados a acciones concretas de usuario: un servicio de email y un servicio de pagos.
 
-### 2.1 Servicio 1 – Email (Resend)
+### 2.1 Servicio 1 – Email (Brevo)
 
-- **Servicio elegido**: Resend (Email Transactional)
+- **Servicio elegido**: Brevo (Email Transactional)
 - **Acción de usuario asociada**: creación de pedido.
 - **Qué dispara la integración**:
   - Cuando un usuario confirma su carrito, la Edge Function `create-order`:
@@ -148,93 +148,19 @@ En esta etapa temprana, el enfoque está en:
 
 ## 4. Estrategia de Distribución (Deck de 5 slides)
 
-### Slide 1 – Modelo de negocio
-
-- Propuesta de valor:
-  - Para caficultores: vender directo, mejor margen, datos de ventas.
-  - Para consumidores: café de origen, trazabilidad, experiencias auténticas.
-- Modelo de ingresos:
-  - Comisión por transacción (porcentaje de cada pedido).
-  - Posible suscripción futura para caficultores (destacar productos, analytics avanzados).
-- Precio:
-  - El consumidor paga el precio del café fijado por el caficultor + margen/plataforma en la comisión.
-
----
-
-### Slide 2 – Usuario target
-
-- Perfil demográfico/conductual:
-  - Consumidores urbanos, 25–45 años, interesados en consumo responsable.
-  - Caficultores pequeños/medianos sin canales digitales robustos.
-- Dolor específico:
-  - Caficultores: ingresos bajos por intermediarios, falta de marca propia, nulo acceso a datos de clientes.
-  - Consumidores: poca transparencia sobre origen del café y poco contacto con la historia del productor.
-- Comportamiento actual:
-  - Venta por intermediarios, cooperativas o mercados locales.
-  - Compras en supermercados o tiendas online genéricas sin trazabilidad.
-
----
-
-### Slide 3 – Hipótesis a validar
-
-- Hipótesis 1 (problema/solución):  
-  Los caficultores están dispuestos a adoptar una plataforma digital si les permite aumentar su margen y visibilidad sin complejidad técnica excesiva.
-
-- Hipótesis 2 (disposición a pagar):  
-  Los consumidores están dispuestos a pagar igual o más que en el supermercado por café de origen directo si perciben mayor valor y transparencia.
-
-- Hipótesis 3 (comportamiento/uso):  
-  Una experiencia de compra simple (catálogo + carrito + seguimiento del pedido) es suficiente para llevar a los usuarios a la UMV sin necesidad de features adicionales complejas.
-
----
-
-### Slide 4 – Canales de adquisición
-
-| Canal          | Táctica inicial                                      | Por qué este canal                                    |
-|----------------|------------------------------------------------------|-------------------------------------------------------|
-| Comunidades    | Grupos de caficultores / cooperativas locales        | Acceso directo a varios productores a la vez.         |
-| Contenido      | Historias de caficultores en redes y blog            | Refuerza el valor de origen y genera confianza.       |
-| Alianzas       | Cafeterías de especialidad como puntos de entrada    | Los clientes ya valoran café de origen y trazabilidad.|
-
----
-
-### Slide 5 – Camino a los primeros 1.000 usuarios
-
-- **Fase 1: 0–100 usuarios**
-  - Validación manual, onboarding guiado para pocos caficultores.
-  - Foco en feedback cualitativo, UX y robustez del flujo de pedidos.
-  - Métrica de éxito: 10–20 pedidos completados con feedback positivo.
-
-- **Fase 2: 100–500 usuarios**
-  - Activación de canales iniciales (comunidades, contenido).
-  - Incentivos simple de referidos (manuales al inicio).
-  - Métrica de éxito: retención de compradores y repetición de pedidos.
-
-- **Fase 3: 500–1.000 usuarios**
-  - Escalamiento de canales que funcionaron (contenido y alianzas).
-  - Posibles partnerships con eventos de café.
-  - Métrica de éxito: crecimiento estable de revenue y ticket promedio.
+https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Distribuci%C3%B3n?page-id=0%3A1&node-id=1-2&viewport=342%2C539%2C0.22&t=kGYPWuvUQ989w8bY-1&scaling=contain&content-scaling=fixed
 
 ---
 
 ## 5. Conciencia técnica – Hacks y límites del Vibe Coding
 
-### 5.1 Hacks implementados (mínimo 3)
+### 5.1 Hacks implementados
 
-#### Hack 1 – Feature flags manuales para vistas/admin
-- **Descripción**: uso de roles (`admin`, `cliente`) y checks en frontend para mostrar/ocultar componentes de administración de productos y pedidos.
-- **Cómo se implementa**: condición basada en `profile.role` para habilitar vistas de gestión de cafés/experiencias.
-- **Riesgo evitado**: cambiar el rol o la estructura de navegación sin tener que reestructurar toda la app; reduce riesgo de errores visuales al experimentar.
-
-#### Hack 2 – Seed de datos realistas
-- **Descripción**: creación de cafés y experiencias de ejemplo con distintos orígenes, precios y stock/cupos.
-- **Cómo se implementa**: script/SQL de seed en Supabase y/o datos cargados desde panel admin.
-- **Riesgo evitado**: probar el sistema con datos irreales o vacíos que no reflejen la experiencia real del usuario.
-
-#### Hack 3 – Logs estratégicos en Edge Functions
-- **Descripción**: loguear en consola/servicio externo los intentos de creación de pedido, fallos de stock y errores de validación.
-- **Cómo se implementa**: logs en la Edge Function `create-order` antes y después de cada paso crítico.
-- **Riesgo evitado**: no entender por qué se rompen pedidos en producción; facilita debug rápido.
+| Hack | Descripción | Cómo lo implementamos | Riesgo técnico/producto que evitamos |
+|------|-------------|-----------------------|-------------------------------------|
+| **Hack 1 – Feature flags manuales** | Control de vistas admin vs cliente sin reestructurar app | Check `profile.role` para mostrar/ocultar gestión de cafés y pedidos | Cambios visuales accidentales al experimentar con roles |
+| **Hack 2 – Seed de datos realistas** | Carga de cafés/experiencias de ejemplo para probar flujos completos | Script SQL en Supabase + panel admin para crear datos iniciales | Probar sistema vacío o con datos irreales |
+| **Hack 3 – Logs estratégicos** | Loguear fallos críticos en Edge Functions y flujos de pago | Logs en `create-order` + resultados de pago y errores de stock | No entender por qué se rompen pedidos en producción; facilita debug rápido. |
 
 ---
 
@@ -249,16 +175,34 @@ En esta etapa temprana, el enfoque está en:
 - **Riesgo 2 – Dependencia de servicios externos (email, analytics)**
   - Descripción: si los servicios externos fallan, la experiencia puede degradarse.
   - Plan de monitoreo: manejar fallos de envío de email sin romper el flujo de pedido, y monitorear caídas de analytics como algo no crítico.
+    
+- **Riesgo 3 – Seguridad insuficiente cuando aparezcan datos sensibles y pagos reales**
+  - Descripción: La POC puede funcionar con reglas mínimas, pero en producción hay datos personales, pagos y estados de pedido; cualquier error de seguridad (RLS mal definida, claves expuestas, usuarios viendo pedidos de otros) rompe confianza y puede tener impacto serio.
+  - Plan de monitoreo:
+  - Revisar periódicamente las políticas de RLS y probar casos "incómodos" (usuario intentando ver/modificar pedidos ajenos).
+  - Evitar guardar claves o tokens en el frontend o en repositorios; revisar el uso de variables de entorno.
+  - Tratar cualquier incidente donde un usuario vea datos de otro como señal crítica y no como bug menor.
 
 #### Decisiones postergadas
 
-- **Decisión 1 – Sistema formal de referidos**
-  - Por qué no ahora: no es esencial para validar la UMV y agregaría complejidad en tracking y UI.
-  - Cuándo revisarla: una vez que se alcance cierta retención y revenue básicos.
+**Decisión 1 – No implementar todavía un sistema complejo de multi-tenant y segmentación avanzada**
+  
+- **Por qué no ahora**: Hoy el producto apunta a pocos caficultores y un solo contexto; implementar multi-tenant completo agregaría mucha complejidad a la arquitectura sin aportar valor inmediato en esta fase.
 
-- **Decisión 2 – Múltiples métodos de pago integrados**
-  - Por qué no ahora: inicialmente se puede usar un único método de pago o incluso pruebas con pagos offline/semimanuales.
-  - Cuándo revisarla: cuando el volumen de pedidos justifique invertir en pasarela de pago completa.
+- **Cuándo revisarla**:  
+Cuando haya múltiples organizaciones/productores con reglas distintas, o se detecten señales de mezcla de datos entre contextos.
+
+**Decisión 2 – Sistema formal de referidos**
+  
+- **Por qué no ahora**: no es esencial para validar la UMV y agregaría complejidad en tracking y UI.
+
+- **Cuándo revisarla**: una vez que se alcance cierta retención y revenue básicos.
+
+**Decisión 3 – Múltiples métodos de pago integrados**
+  
+- **Por qué no ahora**: inicialmente se puede usar un único método de pago o incluso pruebas con pagos offline/semimanuales.
+
+- **Cuándo revisarla**: cuando el volumen de pedidos justifique invertir en pasarela de pago completa.
 
 ---
 
@@ -284,10 +228,6 @@ En esta etapa temprana, el enfoque está en:
   - Usuario cliente demo: `cliente@origen.com` / `clienteorigen024`
   - Usuario admin demo: `admin@origen.com` / `adminorigen024`
 
-- **Capturas de integraciones funcionando**:
-  - Screenshot email de confirmación de pedido (`/docs/img/email-confirmacion.png`)
-  - Screenshot eventos en el dashboard de analytics (`/docs/img/analytics-eventos.png`)
-
-- **Dashboard de métricas**:
-  - Link a dashboard de PostHog / servicio de analytics (si está configurado).
-  - Métricas mínimas: usuarios activos, eventos de `order_created`.
+- **Capturas de integraciones funcionando**
+  
+  https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Entrega-Productos-con-IA?page-id=32%3A8125&node-id=32-8126&viewport=98%2C265%2C0.11&t=yG8P5i7e9HEWNGgm-1&scaling=contain&content-scaling=fixed

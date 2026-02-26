@@ -135,7 +135,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       if (itemsError) throw itemsError;
 
-      // 3. Create a notification for the user
+      // 3. Mark the order as paid — this triggers the database webhook
+      //    that fires the 'send-order-confirmation' Edge Function
+      const { error: paidError } = await supabase
+        .from('orders')
+        .update({ status: 'paid' })
+        .eq('id', order.id);
+
+      if (paidError) throw paidError;
+
+      // 4. Create a notification for the user
       await supabase
         .from('notifications')
         .insert({
