@@ -192,7 +192,7 @@ https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Distribuci%C3%B3n?page-id=0%3
 - **Cuándo revisarla**:  
 Cuando haya múltiples organizaciones/productores con reglas distintas, o se detecten señales de mezcla de datos entre contextos.
 
-**Decisión 1 – Sistema formal de referidos**
+**Decisión 2 – Sistema formal de referidos**
   
 - **Por qué no ahora**: no es esencial para validar la UMV y agregaría complejidad en tracking y UI.
 
