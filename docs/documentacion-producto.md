@@ -185,20 +185,20 @@ https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Distribuci%C3%B3n?page-id=0%3
 
 #### Decisiones postergadas
 
-- **Decisión 1 – No implementar todavía un sistema complejo de multi-tenant y segmentación avanzada**
+**Decisión 1 – No implementar todavía un sistema complejo de multi-tenant y segmentación avanzada**
   
 - **Por qué no ahora**: Hoy el producto apunta a pocos caficultores y un solo contexto; implementar multi-tenant completo agregaría mucha complejidad a la arquitectura sin aportar valor inmediato en esta fase.
 
 - **Cuándo revisarla**:  
 Cuando haya múltiples organizaciones/productores con reglas distintas, o se detecten señales de mezcla de datos entre contextos.
 
-- **Decisión 1 – Sistema formal de referidos**
+**Decisión 1 – Sistema formal de referidos**
   
 - **Por qué no ahora**: no es esencial para validar la UMV y agregaría complejidad en tracking y UI.
 
 - **Cuándo revisarla**: una vez que se alcance cierta retención y revenue básicos.
 
-- **Decisión 3 – Múltiples métodos de pago integrados**
+**Decisión 3 – Múltiples métodos de pago integrados**
   
 - **Por qué no ahora**: inicialmente se puede usar un único método de pago o incluso pruebas con pagos offline/semimanuales.
 
