@@ -175,6 +175,13 @@ https://www.figma.com/proto/BDOXu18zTYmbszXHZv2HYv/Distribuci%C3%B3n?page-id=0%3
 - **Riesgo 2 – Dependencia de servicios externos (email, analytics)**
   - Descripción: si los servicios externos fallan, la experiencia puede degradarse.
   - Plan de monitoreo: manejar fallos de envío de email sin romper el flujo de pedido, y monitorear caídas de analytics como algo no crítico.
+    
+- **Riesgo 3 – Seguridad insuficiente cuando aparezcan datos sensibles y pagos reales**
+  - Descripción: La POC puede funcionar con reglas mínimas, pero en producción hay datos personales, pagos y estados de pedido; cualquier error de seguridad (RLS mal definida, claves expuestas, usuarios viendo pedidos de otros) rompe confianza y puede tener impacto serio.
+  - Plan de monitoreo:
+  - Revisar periódicamente las políticas de RLS y probar casos "incómodos" (usuario intentando ver/modificar pedidos ajenos).
+  - Evitar guardar claves o tokens en el frontend o en repositorios; revisar el uso de variables de entorno.
+  - Tratar cualquier incidente donde un usuario vea datos de otro como señal crítica y no como bug menor.
 
 #### Decisiones postergadas
 
