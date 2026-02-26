@@ -30,9 +30,9 @@ Esta acción implica que:
 
 En el proyecto se integran **2 servicios externos** enlazados a acciones concretas de usuario: un servicio de email y un servicio de pagos.
 
-### 2.1 Servicio 1 – Email (Resend)
+### 2.1 Servicio 1 – Email (Brevo)
 
-- **Servicio elegido**: Resend (Email Transactional)
+- **Servicio elegido**: Brevo (Email Transactional)
 - **Acción de usuario asociada**: creación de pedido.
 - **Qué dispara la integración**:
   - Cuando un usuario confirma su carrito, la Edge Function `create-order`:
