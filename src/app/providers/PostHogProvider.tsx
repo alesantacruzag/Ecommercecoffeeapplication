@@ -16,7 +16,7 @@ if (typeof window !== 'undefined') {
     }
 }
 
-function PostHogPageView() {
+export function PostHogPageView() {
     const location = useLocation();
     const posthog = usePostHog();
 
@@ -34,7 +34,6 @@ function PostHogPageView() {
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
     return (
         <Provider client={posthog}>
-            <PostHogPageView />
             {children}
         </Provider>
     );
