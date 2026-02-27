@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
         posthog.init(posthogKey, {
             api_host: posthogHost,
             person_profiles: 'always',
-            capture_pageview: false // Lo capturamos manualmente para mayor fiabilidad
+            capture_pageview: true // Habilitamos captura automática para mayor redundancia
         });
     }
 }
