@@ -3,6 +3,12 @@ import { PostHogProvider as Provider, usePostHog } from '@posthog/react';
 import { useLocation } from 'react-router';
 import { useEffect } from 'react';
 
+declare global {
+    interface Window {
+        posthog: any;
+    }
+}
+
 if (typeof window !== 'undefined') {
     const posthogKey = import.meta.env.VITE_POSTHOG_KEY;
     const posthogHost = import.meta.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com';
