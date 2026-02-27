@@ -8,11 +8,15 @@ if (typeof window !== 'undefined') {
     const posthogHost = import.meta.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com';
 
     if (posthogKey) {
+        console.log("🚀 PostHog Initializing...");
         posthog.init(posthogKey, {
             api_host: posthogHost,
             person_profiles: 'always',
-            capture_pageview: true // Habilitamos captura automática para mayor redundancia
+            capture_pageview: true
         });
+        window.posthog = posthog;
+    } else {
+        console.warn("⚠️ PostHog Key missing! Check environment variables.");
     }
 }
 
